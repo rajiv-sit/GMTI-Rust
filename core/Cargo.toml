@@ -1,0 +1,20 @@
+[package]
+name = "gmticore"
+version = "0.1.0"
+edition = "2021"
+description = "Signal-processing core for the Rust-based GMTI platform."
+authors = ["Advanced GMTI Team <gmtiteam@example.com>"]
+
+[lib]
+name = "gmticore"
+path = "src/lib.rs"
+
+[dependencies]
+ndarray = "0.15"
+num-complex = "0.4"
+rustfft = "6.4"
+tokio = { version = "1", features = ["sync", "rt-multi-thread"] }
+log = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"

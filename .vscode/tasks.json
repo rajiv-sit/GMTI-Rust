@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "cargo: build core",
+      "type": "shell",
+      "command": "cargo build --package core",
+      "problemMatcher": ["$rustc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "cargo: run simulator",
+      "type": "shell",
+      "command": "cargo run --package simulator",
+      "problemMatcher": ["$rustc"]
+    },
+    {
+      "label": "cargo: test core",
+      "type": "shell",
+      "command": "cargo test --package core",
+      "problemMatcher": ["$rustc"]
+    },
+    {
+      "label": "cargo: fmt",
+      "type": "shell",
+      "command": "cargo fmt",
+      "problemMatcher": []
+    }
+  ]
+}

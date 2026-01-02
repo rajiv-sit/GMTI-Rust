@@ -1,0 +1,4 @@
+# offline detection log
+detections=2 range_profile=2048 doppler_notes=["doppler RMS 11.3137"]
+detections=2 range_profile=2048 doppler_notes=["doppler RMS 11.3137"]
+detections=2 range_profile=2048 doppler_notes=["doppler RMS 10.7401"]

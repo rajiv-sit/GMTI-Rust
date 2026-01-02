@@ -1,0 +1,7 @@
+taps: 8
+range_bins: 4096
+doppler_bins: 512
+frequency: 48.5
+noise: 0.07
+seed: 42
+description: "Long dwell stare scenario with elevated noise floor."

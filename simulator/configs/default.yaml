@@ -1,0 +1,6 @@
+taps: 4
+range_bins: 2048
+doppler_bins: 256
+frequency: 32.0
+noise: 0.03
+description: "Baseline sine wave for regression"

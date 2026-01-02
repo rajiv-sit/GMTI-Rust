@@ -1,0 +1,9 @@
+## Validation Checklist
+
+1. **Rust pipeline parity** – Run `cargo test` (once implemented) and compare the generated `tools/data/offline_detection.log` entries with legacy `gmti/gpd/test/*.out` logs to ensure detection counts and power profiles match.
+2. **GUI synchronization** – Launch `ui/qt/gmti_visualizer` while the simulator serves `http://127.0.0.1:9000/payload`; POST synthetic PRI payloads (`curl -X POST http://127.0.0.1:9000/ingest -d @payload.json -H "Content-Type: application/json"`) and confirm the status graph plus detection count update accordingly.
+3. **Workflow configuration** – Add YAML scenarios under `simulator/configs/` (or external), run `cargo run --bin simulator -- --workflow path/to/config`, and ensure `WorkflowRunner` respects those values and logs results accordingly.
+4. **Telemetry and logging** – Enable `RUST_LOG=info` when running the simulator to track range/doppler/clutter entries and ensure the CSV/JSON outputs include expected RMS/detection metrics.
+5. **Qt bridging** – Once `GuiBridge` targets a more advanced IPC (e.g., `cxx`, `zeromq`, or named pipes), repeat the integration steps above to confirm the front end receives live data without polling delays.
+6. **Baseline automation** — Run `tools/scripts/regen_baselines.sh` to replay every YAML config (`simulator/configs/*.yaml`) and append their summaries to `tools/data/offline_detection.log`; compare those entries to the legacy `.out` files to measure algorithmic consistency.
+7. **Qt offline testing** — Launch `gmti_visualizer`, open the Input Configurator, point it at the workspace, start the simulator bridge (`cargo run --bin simulator -- --serve`), load/adjust a YAML scenario, and run it to confirm the StatusGraph renders the generated power profile and detection count in real time with the new dark UI.

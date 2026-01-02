@@ -1,0 +1,5 @@
+{
+  "rust-analyzer.checkOnSave.command": "clippy",
+  "rust-analyzer.cargo.workspaceRoot": "${workspaceFolder}",
+  "editor.formatOnSave": true
+}

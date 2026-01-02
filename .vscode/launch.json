@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Simulator",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/simulator/target/debug/simulator",
+      "args": [],
+      "cwd": "${workspaceFolder}/simulator",
+      "preLaunchTask": "cargo: build simulator"
+    }
+  ]
+}

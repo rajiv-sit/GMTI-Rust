@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "core",
+    "simulator",
+]
+
+[workspace.metadata]
+description = "Rust-based GMTI platform workspace structure"

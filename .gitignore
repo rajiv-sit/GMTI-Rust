@@ -1,0 +1,14 @@
+target/
+# Cargo packages and dev artifacts
+**/target/
+*.rs.bk
+
+# Visual Studio metadata
+.vs/
+
+# Qt build artifacts
+*.o
+*.obj
+*.pdb
+*.ipch
+build/

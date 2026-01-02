@@ -1,0 +1,7 @@
+taps: 4
+range_bins: 2048
+doppler_bins: 256
+frequency: 20.0
+noise: 0.015
+seed: 107
+description: "Fast scan scenario replicating legacy throughput."
