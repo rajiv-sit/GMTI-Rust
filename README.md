@@ -38,7 +38,7 @@ GMTI-Rust/
 - `GET /payload` returns `power_profile`, `detection_records`, `detection_notes`, and the detection count, allowing additional clients to render Cartesian scatter plots or export the same data for offline analysis.
 
 ### Figure 1 – Visualizer overview
-![Figure 1 – Visualizer overview](docs/assets/visualizer_overview.png)
+<img width="1912" height="1033" alt="image" src="https://github.com/user-attachments/assets/c95149a8-cc08-4f90-8cad-3e00f1b85002" />
 *Figure 1 shows the real-time GUI with the parameter form, waveform, polar detection map, and operational notes, representing the complete telemetry loop.*
 
 ### Running simulator + visualizer
