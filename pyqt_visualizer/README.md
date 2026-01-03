@@ -17,6 +17,7 @@ This PyQt6-based companion visualizer mirrors the Rust UI’s layout while provi
    pip install -r requirements.txt
    ```
    > **Tip:** these requirements target Python 3.11/3.12 because prebuilt `numpy` wheels are available; running under 3.14 currently triggers a source build that fails if `setuptools.build_meta` isn’t present. If you must use 3.14, install the `setuptools`/`wheel` packages (`python -m pip install -U pip setuptools wheel`) before `pip install -r requirements.txt`, or switch to one of the earlier interpreters to avoid builds.
+   > **Note:** PyOpenGL is now part of the dependencies so the 3D scatter view can import `OpenGL.GL`; the requirements file includes it.
 2. Keep the Rust simulator running (`cargo run --bin simulator -- --serve`) so the HTTP endpoints stay available.
 3. Launch this visualizer:
    ```bash
