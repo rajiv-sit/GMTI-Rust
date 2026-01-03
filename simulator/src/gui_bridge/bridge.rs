@@ -55,6 +55,8 @@ impl GuiBridge {
                             *guard = VisualizationModel {
                                 power_profile: result.power_profile.clone(),
                                 detection_count: result.detection_count,
+                                detection_records: result.detection_records.clone(),
+                                detection_notes: result.doppler_notes.clone(),
                             };
                             Ok::<_, warp::Rejection>(warp::reply::with_status(
                                 warp::reply::json(&json!({"status": "ok"})),
@@ -86,6 +88,8 @@ impl GuiBridge {
                             *guard = VisualizationModel {
                                 power_profile: result.power_profile.clone(),
                                 detection_count: result.detection_count,
+                                detection_records: result.detection_records.clone(),
+                                detection_notes: result.doppler_notes.clone(),
                             };
                             if let Some(name) = config.scenario.as_ref() {
                                 println!(
@@ -128,9 +132,10 @@ impl GuiBridge {
         let mut guard = self.state.write().unwrap();
         *guard = model.clone();
         println!(
-            "[GUI] power profile points: {}, detections: {}",
+            "[GUI] power profile points: {}, detections: {}, records: {}",
             guard.power_profile.len(),
-            guard.detection_count
+            guard.detection_count,
+            guard.detection_records.len()
         );
         Ok(())
     }

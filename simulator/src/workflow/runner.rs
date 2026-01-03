@@ -1,6 +1,6 @@
 use crate::workflow::config::WorkflowConfig;
 use anyhow::Context;
-use gmticore::agp_interface::PriPayload;
+use gmticore::agp_interface::{DetectionRecord, PriPayload};
 use gmticore::prelude::{ProcessingStage, StageInput};
 use gmticore::processing::{ClutterStage, DopplerStage, RangeStage};
 
@@ -8,6 +8,7 @@ pub struct WorkflowResult {
     pub power_profile: Vec<f32>,
     pub detection_count: usize,
     pub doppler_notes: Vec<String>,
+    pub detection_records: Vec<DetectionRecord>,
 }
 
 #[derive(Clone)]
@@ -64,13 +65,15 @@ impl Runner {
             .power_profile
             .clone()
             .unwrap_or_default();
-        let detection_count = clutter_output.metadata.detection_count.unwrap_or(0);
+        let detection_records = clutter_output.metadata.detection_records.clone();
+        let detection_count = detection_records.len();
         let doppler_notes = doppler_output.metadata.notes.clone();
 
         Ok(WorkflowResult {
             power_profile,
             detection_count,
             doppler_notes,
+            detection_records,
         })
     }
 }

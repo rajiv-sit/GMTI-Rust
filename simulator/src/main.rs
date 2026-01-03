@@ -54,24 +54,27 @@ fn main() -> anyhow::Result<()> {
         let result = runner.execute(&payload)?;
 
         println!(
-            "Offline run -> detections {}, power_profile len {}, doppler notes {:?}",
+            "Offline run -> detections {}, power_profile len {}, records {}",
             result.detection_count,
             result.power_profile.len(),
-            result.doppler_notes
+            result.detection_records.len()
         );
 
         let model = VisualizationModel {
             power_profile: result.power_profile.clone(),
             detection_count: result.detection_count,
+            detection_records: result.detection_records.clone(),
+            detection_notes: result.doppler_notes.clone(),
         };
 
         gui_bridge.publish(&model)?;
         gui_bridge.publish_status("Offline workflow results ready.");
 
         let report = format!(
-            "detections={} range_profile={} doppler_notes={:?}\n",
+            "detections={} range_profile={} records={} doppler_notes={:?}\n",
             result.detection_count,
             result.power_profile.len(),
+            result.detection_records.len(),
             result.doppler_notes
         );
         let report_path = PathBuf::from("tools/data/offline_detection.log");

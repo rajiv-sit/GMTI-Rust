@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::agp_interface::DetectionRecord;
+
 /// Shared configuration for each processing stage.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StageConfig {
@@ -27,6 +29,7 @@ pub struct StageOutput {
 pub struct StageMetadata {
     pub power_profile: Option<Vec<f32>>,
     pub detection_count: Option<usize>,
+    pub detection_records: Vec<DetectionRecord>,
     pub notes: Vec<String>,
 }
 
