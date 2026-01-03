@@ -50,6 +50,12 @@ GMTI-Rust/
    cargo run --bin simulator -- --serve
    ```
    Leave this running (Ctrl+C to stop) so `/payload` stays live for five minutes or as long as you need the GUI to poll.
+   If you need to terminate the simulator from another shell (e.g., port 9000 is still bound), use PowerShell’s process commands instead of relying on Ctrl+C:
+   ```powershell
+   Get-Process simulator             # shows the PID
+   Stop-Process -Id <PID>            # or use -Name simulator
+   ```
+   Alternatively, if you ran it via `cargo run` in that shell, pressing `Ctrl+C` in that same window also kills the process and frees the port.
 2. **Terminal 2 (visualizer UI):**  
    ```powershell
    cd /path/to/GMTI-Rust
