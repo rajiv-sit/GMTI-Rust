@@ -2,6 +2,7 @@
 members = [
     "core",
     "simulator",
+    "visualizer",
 ]
 
 [workspace.metadata]
