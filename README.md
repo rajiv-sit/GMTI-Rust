@@ -35,6 +35,7 @@ GMTI-Rust/
 ## Visualizer telemetry
 - The visualizer now lists the meaning of every config parameter (taps, range/doppler bins, frequency, noise floor, seed, description) so you know how each value affects runtime behavior.  
 - The telemetry pane draws a polar detection map (radius = range, angle = normalized Doppler) plus a textual table of `detection_records` that include range, Doppler, and SNR.  
+- The detection canvas now toggles between polar and Cartesian views, offers zoom/rotation controls plus grid/label toggles, and surfaces scenario metadata tags so analysts can explore the 10 km × 10 km environment in 2D.  
 - `GET /payload` returns `power_profile`, `detection_records`, `detection_notes`, and the detection count, allowing additional clients to render Cartesian scatter plots or export the same data for offline analysis.
 
 ### Figure 1 – Visualizer overview
@@ -63,6 +64,24 @@ GMTI-Rust/
    cargo run --bin visualizer
    ```
    Keep this window open; the GUI repeatedly polls `http://127.0.0.1:9000/payload` and renders the waveform/detections in real time.
+
+## PyQt6 visualizer
+
+An experimental PyQt6 client lives in `pyqt_visualizer/` that mirrors the Rust GUI layout, adds a polar + 3D scatter view, and lets you pan/zoom/rotate detections with `pyqtgraph.opengl`.
+
+1. Install the Python dependencies:
+   ```powershell
+   cd /path/to/GMTI-Rust/pyqt_visualizer
+   pip install -r requirements.txt
+   ```
+2. Keep the simulator (`cargo run --bin simulator -- --serve`) running so `/payload` and `/ingest-config` stay live.
+3. Launch the PyQt visualizer:
+   ```powershell
+   python main.py
+   ```
+4. The GUI polls the same endpoints, shows the power profile, detection table, scenario metadata, and a full 3D scatter plot. Use the form the same as the Rust version and click “Start 10-min run” to trigger repeated HTTP POSTs during streaming sessions.
+
+The PyQt client is meant for side-by-side comparison with the Rust visualization layer; feel free to run both to evaluate their usability and performance.
 
 ## Documentation
 - `architecture.md`: workspace layout, data flow, roadmap.  
