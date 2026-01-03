@@ -1,6 +1,6 @@
 # GMTI-Rust Overview
 
-GMTI-Rust is a Rust-based modernization of the AESADIRP/AIRRADAR GMTI pipeline that keeps the legacy DSP methodology (Range → Doppler → CFAR) while adding safer ownership rules, async-friendly ingestion, baseline automation, and a cross-platform Rust visualizer built with `iced`.
+GMTI-Rust is a Rust-based GMTI pipeline that keeps the legacy DSP methodology (Range → Doppler → CFAR) while adding safer ownership rules, async-friendly ingestion, baseline automation, and a cross-platform Rust visualizer built with `iced`.
 
 ## Repository layout
 
@@ -67,8 +67,5 @@ GMTI-Rust/
 ## Documentation
 - `architecture.md`: workspace layout, data flow, roadmap.  
 - `docs/requirements.md`, `docs/validation.md`, `docs/testing.md`: requirements, parity checks, coverage strategy.  
-- `docs/legacy_mapping.md`: maps AESADIRP/AIRRADAR files to Rust replacements.  
 - `docs/coverage_report.md`: tells you how to capture ≥80% coverage with tarpaulin/grcov on Linux/macOS.
 
-## Legacy references
-- `AESADIRP_935_picosar/` and `AIRRADAR_351_cpp/` remain in the workspace for theoretical traceability.
