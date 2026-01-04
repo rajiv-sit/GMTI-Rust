@@ -1,5 +1,5 @@
 PyQt6==6.7.1
 pyqtgraph==0.13.7
-requests==2.32.1
+requests==2.32.4
 numpy==1.25.2
 PyOpenGL==3.1.7
