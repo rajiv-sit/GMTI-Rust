@@ -8,7 +8,8 @@ import numpy as np
 import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 import requests
-from PyQt6.QtCore import QObject, QRunnable, QThreadPool, QTimer, pyqtSignal, Qt
+from PyQt6.QtCore import QObject, QRunnable, QThreadPool, QTimer, pyqtSignal
+from PyQt6.QtGui import QPalette, QColor
 from PyQt6.QtWidgets import (
     QApplication,
     QGridLayout,
@@ -100,6 +101,7 @@ class PyQtVisualizer(QWidget):
         self.stream_start_ts = time.time()
         self.history: List[str] = []
 
+        self._apply_dark_theme()
         self._setup_ui()
         self.resize(1500, 900)
 
@@ -172,6 +174,10 @@ class PyQtVisualizer(QWidget):
         self.metadata_label = QLabel("<b>Scenario metadata</b><br>No metadata yet.")
         self.metadata_label.setWordWrap(True)
         telemetry_layout.addWidget(self.metadata_label)
+
+        self.detection_summary_label = QLabel("No detections yet.")
+        self.detection_summary_label.setWordWrap(True)
+        telemetry_layout.addWidget(self.detection_summary_label)
 
         self.gl_view = gl.GLViewWidget()
         self.gl_view.opts["distance"] = 5000
@@ -254,6 +260,7 @@ class PyQtVisualizer(QWidget):
         self._update_detection_table(detection_records)
         self._update_metadata(metadata)
         self._update_3d_view(detection_records)
+        self._update_detection_summary(detection_records)
         self._append_log(f"Telemetry: {detection_count} detections, {len(power_bins)} bins.")
 
     def _handle_payload_error(self, message: str) -> None:
@@ -291,6 +298,33 @@ class PyQtVisualizer(QWidget):
         payload["timestamp_start"] = timestamp
         return payload
 
+    def _apply_dark_theme(self) -> None:
+        palette = QPalette()
+        palette.setColor(QPalette.ColorRole.Window, QColor("#0f1220"))
+        palette.setColor(QPalette.ColorRole.WindowText, QColor("#f3f6ff"))
+        palette.setColor(QPalette.ColorRole.Base, QColor("#1e2235"))
+        palette.setColor(QPalette.ColorRole.AlternateBase, QColor("#232741"))
+        palette.setColor(QPalette.ColorRole.ToolTipBase, QColor("#fdfdfd"))
+        palette.setColor(QPalette.ColorRole.ToolTipText, QColor("#ffffff"))
+        palette.setColor(QPalette.ColorRole.Text, QColor("#fdfdff"))
+        palette.setColor(QPalette.ColorRole.Button, QColor("#1f1e33"))
+        palette.setColor(QPalette.ColorRole.ButtonText, QColor("#f8fbff"))
+        palette.setColor(QPalette.ColorRole.Highlight, QColor("#3d6cfb"))
+        palette.setColor(QPalette.ColorRole.HighlightedText, QColor("#ffffff"))
+        self.setPalette(palette)
+        self.setStyleSheet(
+            """
+            QWidget { background-color: #0f1220; color: #f3f6ff; }
+            QGroupBox { border: 1px solid #2f3347; margin-top: 16px; }
+            QGroupBox::title { color: #cfd3ff; padding: 0 6px; }
+            QPushButton { background-color: #1e1f2b; color: #fefeff; border: 1px solid #2b3050; padding: 6px; }
+            QPushButton:hover { background-color: #272d52; }
+            QLineEdit, QTableWidget, QTextEdit { background-color: #111428; color: #f8fbff; border: 1px solid #2d3251; }
+            QLabel { color: #f6f7ff; }
+            QTextEdit { border-radius: 4px; }
+            """
+        )
+
     def _update_power_profile(self, samples: List[float]) -> None:
         if samples:
             x = np.arange(len(samples), dtype=float)
@@ -317,6 +351,19 @@ class PyQtVisualizer(QWidget):
             self.detection_table.setItem(
                 row, 3, QTableWidgetItem(f"{record.get('snr', 0):.2f}")
             )
+
+    def _update_detection_summary(self, records: List[Dict[str, Any]]) -> None:
+        if not records:
+            self.detection_summary_label.setText("No detections to visualize.")
+            return
+        top = sorted(records, key=lambda rec: rec.get("snr", 0), reverse=True)[:3]
+        summary = "Top detections:\n"
+        summary += "\n".join(
+            f"#{idx + 1}: range {rec.get('range', 0):.1f} m, doppler {rec.get('doppler', 0):.2f} m/s, "
+            f"SNR {rec.get('snr', 0):.2f} dB"
+            for idx, rec in enumerate(top)
+        )
+        self.detection_summary_label.setText(summary)
 
     def _update_metadata(self, metadata: Dict[str, Any]) -> None:
         if not metadata:
