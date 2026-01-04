@@ -189,7 +189,8 @@ class PyQtVisualizer(QWidget):
         self.axis_item = gl.GLAxisItem()
         self.axis_item.setSize(6000, 6000, 6000)
         self.gl_view.addItem(self.axis_item)
-        self.scatter = gl.GLScatterPlotItem()
+        self.scatter = gl.GLScatterPlotItem(size=6, pxMode=True)
+        self.scatter.setGLOptions("additive")
         self.gl_view.addItem(self.scatter)
         telemetry_layout.addWidget(self.gl_view, stretch=2)
 
@@ -424,6 +425,7 @@ class PyQtVisualizer(QWidget):
             pos=np.array(positions, dtype=float),
             color=np.array(colors, dtype=float),
             size=np.array(sizes, dtype=float),
+            pxMode=True,
         )
 
     def _append_log(self, message: str) -> None:
