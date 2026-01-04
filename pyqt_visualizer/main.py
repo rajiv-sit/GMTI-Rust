@@ -192,6 +192,7 @@ class PyQtVisualizer(QWidget):
         self.scatter = gl.GLScatterPlotItem(size=6, pxMode=True)
         self.scatter.setGLOptions("additive")
         self.gl_view.addItem(self.scatter)
+        self.gl_view.setCameraPosition(distance=12000, elevation=30, azimuth=45)
         telemetry_layout.addWidget(self.gl_view, stretch=2)
 
         self.log_widget = QTextEdit()
@@ -427,6 +428,7 @@ class PyQtVisualizer(QWidget):
             size=np.array(sizes, dtype=float),
             pxMode=True,
         )
+        self.gl_view.update()
 
     def _append_log(self, message: str) -> None:
         timestamp = time.strftime("%H:%M:%S")
