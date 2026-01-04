@@ -403,25 +403,24 @@ class PyQtVisualizer(QWidget):
         positions = []
         colors = []
         sizes = []
-        for record in records[:256]:
+        total = len(records)
+        for idx, record in enumerate(records[:256]):
             rng = float(record.get("range", 0))
-            doppler = float(record.get("doppler", 0))
             snr = float(record.get("snr", 0))
-            normalized_doppler = np.clip(doppler / 80.0, -1.0, 1.0)
-            angle = normalized_doppler * np.pi / 2.0
+            angle = (idx / max(total - 1, 1)) * 2.0 * np.pi
             x = rng * np.cos(angle) * scale
             y = rng * np.sin(angle) * scale
-            z = snr
+            z = max(0.0, min(12.0, snr * 0.25))
             positions.append((x, y, z))
             colors.append(
                 (
-                    min(1.0, 0.3 + snr / 40.0),
-                    max(0.1, 0.8 - snr / 80.0),
-                    0.4,
-                    0.9,
+                    min(1.0, 0.4 + snr / 40.0),
+                    max(0.15, 0.85 - snr / 90.0),
+                    max(0.2, 0.5 - snr / 80.0),
+                    0.95,
                 )
             )
-            sizes.append(np.clip(4 + snr * 0.17, 2, 14))
+            sizes.append(np.clip(3 + snr * 0.16, 4, 18))
         self.scatter.setData(
             pos=np.array(positions, dtype=float),
             color=np.array(colors, dtype=float),
