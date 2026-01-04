@@ -186,6 +186,9 @@ class PyQtVisualizer(QWidget):
         grid.setSize(6000, 6000, 1)
         grid.setSpacing(500, 500, 500)
         self.gl_view.addItem(grid)
+        self.axis_item = gl.GLAxisItem()
+        self.axis_item.setSize(6000, 6000, 6000)
+        self.gl_view.addItem(self.axis_item)
         self.scatter = gl.GLScatterPlotItem()
         self.gl_view.addItem(self.scatter)
         telemetry_layout.addWidget(self.gl_view, stretch=2)
@@ -259,7 +262,7 @@ class PyQtVisualizer(QWidget):
         self._update_power_profile(power_bins)
         self._update_detection_table(detection_records)
         self._update_metadata(metadata)
-        self._update_3d_view(detection_records)
+        self._update_3d_view(detection_records, metadata)
         self._update_detection_summary(detection_records)
         self._append_log(f"Telemetry: {detection_count} detections, {len(power_bins)} bins.")
 
@@ -382,33 +385,41 @@ class PyQtVisualizer(QWidget):
         )
         self.metadata_label.setText(html)
 
-    def _update_3d_view(self, records: List[Dict[str, Any]]) -> None:
+    def _update_3d_view(self, records: List[Dict[str, Any]], metadata: Dict[str, Any]) -> None:
         if not records:
             self.scatter.setData(
                 pos=np.array([[0, 0, 0]], dtype=float), size=np.array([3.0]), color=np.array([[0.2, 0.4, 0.8, 0.9]])
             )
             return
+        area_width = metadata.get("area_width_km") or metadata.get("area_width", 10)
+        area_height = metadata.get("area_height_km") or metadata.get("area_height", 10)
+        area_m = max(area_width, area_height, 8.0) * 1000.0
+        max_range = max((float(record.get("range", 0)) for record in records), default=area_m)
+        display_range = max(area_m, max_range, 100.0)
+        scale = 5000.0 / display_range
+
         positions = []
         colors = []
         sizes = []
-        for record in records[:128]:
+        for record in records[:256]:
             rng = float(record.get("range", 0))
             doppler = float(record.get("doppler", 0))
             snr = float(record.get("snr", 0))
-            angle = np.clip(doppler / 80.0, -1.0, 1.0) * np.pi / 2.0
-            x = rng * np.cos(angle)
-            y = rng * np.sin(angle)
+            normalized_doppler = np.clip(doppler / 80.0, -1.0, 1.0)
+            angle = normalized_doppler * np.pi / 2.0
+            x = rng * np.cos(angle) * scale
+            y = rng * np.sin(angle) * scale
             z = snr
             positions.append((x, y, z))
             colors.append(
                 (
                     min(1.0, 0.3 + snr / 40.0),
                     max(0.1, 0.8 - snr / 80.0),
-                    0.2,
+                    0.4,
                     0.9,
                 )
             )
-            sizes.append(np.clip(5 + snr * 0.2, 3, 12))
+            sizes.append(np.clip(4 + snr * 0.17, 2, 14))
         self.scatter.setData(
             pos=np.array(positions, dtype=float),
             color=np.array(colors, dtype=float),
