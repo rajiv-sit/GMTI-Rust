@@ -115,7 +115,16 @@ fn augment_detection_records(
         let wobble = ((timestamp + idx as f64 * 0.18).sin() * 12.0) as f32;
         let doppler = (doppler_base + wobble).clamp(-80.0, 80.0);
         let snr = (snr_target + ratio * 8.0 - interference_magnitude * 0.1).max(2.0);
-        let extra = DetectionRecord::new(timestamp + idx as f64 * 0.0004, range, doppler, snr);
+        let bearing_deg = (idx as f32 / target as f32) * 360.0;
+        let elevation_deg = 0.0;
+        let extra = DetectionRecord::new(
+            timestamp + idx as f64 * 0.0004,
+            range,
+            doppler,
+            snr,
+            bearing_deg,
+            elevation_deg,
+        );
         records.push(extra);
     }
 

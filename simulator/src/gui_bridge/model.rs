@@ -1,4 +1,4 @@
-use gmticore::agp_interface::DetectionRecord;
+use gmticore::agp_interface::{DetectionRecord, ScenarioMetadata};
 use serde::{Deserialize, Serialize};
 
 #[allow(dead_code)]
@@ -8,6 +8,7 @@ pub struct VisualizationModel {
     pub detection_count: usize,
     pub detection_records: Vec<DetectionRecord>,
     pub detection_notes: Vec<String>,
+    pub scenario_metadata: Option<ScenarioMetadata>,
 }
 
 #[allow(dead_code)]
@@ -18,6 +19,7 @@ impl VisualizationModel {
             detection_count: 0,
             detection_records: Vec::new(),
             detection_notes: Vec::new(),
+            scenario_metadata: None,
         }
     }
 }

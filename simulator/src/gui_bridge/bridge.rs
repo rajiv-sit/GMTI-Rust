@@ -57,6 +57,7 @@ impl GuiBridge {
                                 detection_count: result.detection_count,
                                 detection_records: result.detection_records.clone(),
                                 detection_notes: result.doppler_notes.clone(),
+                                scenario_metadata: result.scenario_metadata.clone(),
                             };
                             Ok::<_, warp::Rejection>(warp::reply::with_status(
                                 warp::reply::json(&json!({"status": "ok"})),
@@ -90,6 +91,7 @@ impl GuiBridge {
                                 detection_count: result.detection_count,
                                 detection_records: result.detection_records.clone(),
                                 detection_notes: result.doppler_notes.clone(),
+                                scenario_metadata: result.scenario_metadata.clone(),
                             };
                             if let Some(name) = config.scenario.as_ref() {
                                 println!(
@@ -168,6 +170,9 @@ mod tests {
         let model = VisualizationModel {
             power_profile: result.power_profile.clone(),
             detection_count: result.detection_count,
+            detection_records: result.detection_records.clone(),
+            detection_notes: result.doppler_notes.clone(),
+            scenario_metadata: result.scenario_metadata.clone(),
         };
         gui.publish(&model).unwrap();
         assert_eq!(gui.snapshot().detection_count, result.detection_count);

@@ -65,6 +65,7 @@ fn main() -> anyhow::Result<()> {
             detection_count: result.detection_count,
             detection_records: result.detection_records.clone(),
             detection_notes: result.doppler_notes.clone(),
+            scenario_metadata: result.scenario_metadata.clone(),
         };
 
         gui_bridge.publish(&model)?;

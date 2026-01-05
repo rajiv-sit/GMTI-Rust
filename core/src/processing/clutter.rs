@@ -67,7 +67,20 @@ impl ProcessingStage for ClutterStage {
                     0.0
                 };
                 let snr = value / threshold;
-                detection_records.push(DetectionRecord::new(timestamp, range, doppler, snr));
+                let bearing_deg = if buffer_len > 0.0 {
+                    (idx as f32 / buffer_len) * 360.0
+                } else {
+                    0.0
+                };
+                let elevation_deg = 0.0;
+                detection_records.push(DetectionRecord::new(
+                    timestamp,
+                    range,
+                    doppler,
+                    snr,
+                    bearing_deg,
+                    elevation_deg,
+                ));
             }
         }
 
