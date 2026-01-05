@@ -12,3 +12,6 @@ target/
 *.pdb
 *.ipch
 build/
+
+# External binaries
+ffmpeg-master-latest-win64-gpl-shared/
