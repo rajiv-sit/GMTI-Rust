@@ -86,6 +86,7 @@ GMTI-Rust
 ### Outputs
 - **Structured telemetry:** Each stage emits `StageMetadata` (power profiles, notes, detection counts) consumed by `GuiBridge` and `WorkflowRunner` logs (`tools/data/offline_detection.log`).  
 - **Visualization payload:** `GET /payload` now serves `VisualizationModel` with the power profile, detection count, `detection_records` (range/doppler/SNR tuples), and `detection_notes` so the Rust visualizer can render the polar detection map and textual logs.
+- **Visualization payload:** `GET /payload` now serves `VisualizationModel` with the power profile, detection count, `detection_records` (range/doppler/SNR/bearing/elevation tuples), and `detection_notes` so the Rust visualizer can render the polar detection map and textual logs, and the PyQt client can build Cartesian/polar projections plus per-detection metadata.
 - **Baseline logs:** `tools/scripts/regen_baselines.sh` drives offline configs and appends summaries to `tools/data/offline_detection.log`, mimicking legacy `.out` regression logs.  
 - **Console/GUI traces:** `GuiBridge` prints status updates and errors; the Rust visualizer renders waveforms, detection counters, and exposes configuration controls for both offline datasets and live streams.
 
@@ -102,10 +103,18 @@ GMTI-Rust
 - **Dedicated math helpers:** `math::fft`, `math::stats`, and `math::matrix` wrap `rustfft`/`ndarray` but expose interfaces analogous to the old SPL utilities, making the algorithmic logic easier to trace during the upcoming code comparison.  
 - **Workflow orchestration:** `simulator::workflow::Runner` runs range → doppler → clutter sequentially, harvests `StageMetadata`, and funnels detection counts into both logs and the GUI payload.  
 - **Real-time bridge & Rust visualizer:** `GuiBridge` spins up a Warp HTTP server (9000) to feed the `visualizer` over `http://127.0.0.1:9000/payload`. Both offline and live modes reuse the same `VisualizationModel`, ensuring the UI always reflects the current data stream.  
+- **PyQt visualizer & detection projection:** `pyqt_visualizer/main.py` and `pyqt_visualizer/geometry.py` consume the same `VisualizationModel` but extend the view with ±10 km grids, polar/cartesian toggle, manual zoom persistence, and 3D spheres + labels per detection. Every sphere derives a 5 m radius from the computed XY/Z coordinates so range/doppler/SNR plus bearing/elevation show up both in the table and on-screen annotations.
 - **Scenario-driven generator endpoint:** `POST /ingest-config` lets the visualizer’s Input Config panel describe offline test cases (taps/bins/frequency/noise/seed) and delegates PRI sample generation to `generator::profile` before rerunning Range→Doppler→Clutter, so generated data exercises the same DSP code as the legacy pipeline.  
 - **Offline test configurator:** The new Rust visualizer panel lets operators point to the workspace, launch `cargo run --bin simulator -- --serve`, load YAML scenarios, adjust taps/range/doppler/noise, and POST generated CPI payloads to `/ingest`, while the dark-themed StatusGraph renders the power profile and detection count in real time.  
 - **Generator for offline validation:** `generator::profile` produces deterministic sine-wave CPI data; future enhancements will add PRI metadata, noise, multi-tap bursts, and configuration files so we can visually validate inputs before real data arrives.  
 - **Documentation-driven parity:** `docs/legacy_mapping.md` already aligns legacy files with Rust modules and will expand to capture per-file reasoning, honoring the requirement to compare code (not just outputs).
+
+## Detection telemetry & coordinates
+
+- `core::agp_interface::DetectionRecord` now emits `range`, `doppler`, `snr`, `bearing_deg`, and `elevation_deg`. The simulator’s clutter stage and runner augmentation populate those angles whenever possible and fall back to a synthetic sweep so detection clients always see an azimuth span.
+- `pyqt_visualizer/geometry.py` reuses those raw tuples to compute polar or Cartesian XY coordinates, clipping horizontal range to the 10 km radius while normalizing Doppler for the stretch of each axis.
+- `pyqt_visualizer/main.py` keeps a 10 km grid/polar toggle, a table listing range/bearing/elevation/doppler/SNR, and a detection summary that reports the same metrics; the 3D view renders each point as a 5 m-radius sphere with floating text showing `id`, `range`, `bearing`, and `elevation`, so operators can visually correlate each detection’s state.
+- When telemetry lacks elevation data the GUI derives a nadir angle from the platform altitude (default 4 km) so the PyQt scatter stays grounded and the spheres appear above the platform instead of collapsing at the origin.
 
 ## Plan & Roadmap (incremental steps 1–5)
 

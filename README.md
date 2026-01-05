@@ -17,10 +17,11 @@ GMTI-Rust/
 ```
 
 ## Key components
-- **Input ingestion:** offline YAML workflows, synthetic generator payloads, HTTP `/ingest-config`, and `/ingest` align with the legacy AGP values.  
-- **Core pipeline:** `gmticore::processing::{RangeStage, DopplerStage, ClutterStage}` implements the classical FFT + CFAR flow with ownership-safe buffer pools and telemetry helpers.  
-- **Rust visualizer:** the `visualizer` crate polls `http://127.0.0.1:9000/payload`, displays the power profile, detection counts, and provides a config panel that POSTs back to `/ingest-config`.
-- **Automation:** `tools/scripts/run_offline_scenarios.py` iterates YAML decks, `tools/scripts/regen_baselines.sh` rewrites regression logs, and `docs/coverage_report.md` tracks ≥80% coverage.
+- **Input ingestion:** offline YAML workflows, synthetic generator payloads, HTTP /ingest-config, and /ingest align with the legacy AGP values.  
+- **Core pipeline:** gmticore::processing::{RangeStage, DopplerStage, ClutterStage} implements the classical FFT + CFAR flow with ownership-safe buffer pools and telemetry helpers.  
+- **Rust visualizer:** the isualizer crate polls http://127.0.0.1:9000/payload, displays the power profile, detection counts, and provides a config panel that POSTs back to /ingest-config.  
+- **PyQt visualizer:** pyqt_visualizer/main.py mirrors the Rust layout, adds a 3D scatter/polar view, per-detection tables, and zoom/label controls that keep the ±10 km surveillance volume annotated with range/bearing/elevation/doppler/SNR.  
+- **Automation:** 	ools/scripts/run_offline_scenarios.py iterates YAML decks, 	ools/scripts/regen_baselines.sh rewrites regression logs, and docs/coverage_report.md tracks 80% coverage.
 
 ## Getting started
 1. Install the Rust toolchain (`rustup`, `rustc 1.92.0`, `cargo 1.92.0`).  
@@ -37,10 +38,6 @@ GMTI-Rust/
 - The telemetry pane draws a polar detection map (radius = range, angle = normalized Doppler) plus a textual table of `detection_records` that include range, Doppler, and SNR.  
 - The detection canvas now toggles between polar and Cartesian views, offers zoom/rotation controls plus grid/label toggles, and surfaces scenario metadata tags so analysts can explore the 10 km × 10 km environment in 2D.  
 - `GET /payload` returns `power_profile`, `detection_records`, `detection_notes`, and the detection count, allowing additional clients to render Cartesian scatter plots or export the same data for offline analysis.
-
-### Figure 1 – Visualizer overview
-<img width="1912" height="1033" alt="image" src="https://github.com/user-attachments/assets/c95149a8-cc08-4f90-8cad-3e00f1b85002" />
-*Figure 1 shows the real-time GUI with the parameter form, waveform, polar detection map, and operational notes, representing the complete telemetry loop.*
 
 ### Running simulator + visualizer
 1. **Terminal 1 (simulator server):**  
@@ -81,7 +78,7 @@ An experimental PyQt6 client lives in `pyqt_visualizer/` that mirrors the Rust G
    ```
 4. The GUI polls the same endpoints, shows the power profile, detection table, scenario metadata, and a full 3D scatter plot. Use the form the same as the Rust version and click “Start 10-min run” to trigger repeated HTTP POSTs during streaming sessions.
 
-The PyQt client is meant for side-by-side comparison with the Rust visualization layer; feel free to run both to evaluate their usability and performance.
+The PyQt client is meant for side-by-side comparison with the Rust visualization layer; feel free to run both while referencing docs/architecture.md for the detailed telemetry and GUI design rationale.
 
 ## Documentation
 - `architecture.md`: workspace layout, data flow, roadmap.  
